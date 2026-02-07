@@ -243,20 +243,35 @@ function updateResults(dt) {
   if (input.consumeAction()) {
     const pos = input.getLastActionPos();
     if (pos) {
-      // Map touch/click position to canvas coordinates for option targeting
+      // Map touch/click position to canvas coordinates
       const rect = canvas.getBoundingClientRect();
       const canvasY = ((pos.y - rect.top) / rect.height) * GAME_HEIGHT;
-      // Option zones based on rendered Y positions
-      if (canvasY >= 164 && canvasY < 184) {
-        resultsSelection = 0; // PLAY AGAIN
-      } else if (canvasY >= 184 && canvasY < 204) {
-        resultsSelection = 1; // SHARE
-      } else if (canvasY >= 204 && canvasY < 224) {
-        resultsSelection = 2; // BACK TO MENU
-      }
-    }
 
-    executeResultsAction();
+      // Compute option positions to match renderer layout
+      const scoreY = gatesMissed > 0 ? 116 : 108;
+      const bestY = scoreY + 30;
+      const firstOptionY = bestY + 22;
+      const optionSpacing = 18;
+      const hitZone = optionSpacing / 2;
+
+      let tappedOption = -1;
+      for (let i = 0; i < RESULTS_OPTIONS; i++) {
+        const y = firstOptionY + i * optionSpacing;
+        if (canvasY >= y - hitZone && canvasY < y + hitZone) {
+          tappedOption = i;
+          break;
+        }
+      }
+
+      if (tappedOption >= 0) {
+        resultsSelection = tappedOption;
+        executeResultsAction();
+      }
+      // Tap outside option zones — ignore
+    } else {
+      // Keyboard Enter — execute current selection
+      executeResultsAction();
+    }
   }
 }
 
