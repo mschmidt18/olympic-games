@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Winter Olympics 2026 - Retro Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/nes-palette.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <canvas id="snow-bg"></canvas>
+  <div id="screen">
+    <header id="title-section">
+      <div id="rings">
+        <span class="ring ring-blue"></span>
+        <span class="ring ring-gold"></span>
+        <span class="ring ring-black"></span>
+        <span class="ring ring-green"></span>
+        <span class="ring ring-red"></span>
+      </div>
+      <h1 id="title">WINTER OLYMPICS</h1>
+      <h2 id="subtitle">MILANO-CORTINA 2026</h2>
+    </header>
+
+    <nav id="game-menu">
+      <h3 class="menu-label">SELECT EVENT</h3>
+      <ul id="game-list">
+        <li class="game-item active" data-game="skiing">
+          <span class="cursor">&#9654;</span>
+          <span class="game-name">DOWNHILL SKIING</span>
+          <span class="game-status ready">READY</span>
+        </li>
+        <li class="game-item disabled" data-game="bobsled">
+          <span class="cursor">&#9654;</span>
+          <span class="game-name">BOBSLED</span>
+          <span class="game-status">COMING SOON</span>
+        </li>
+        <li class="game-item disabled" data-game="figure-skating">
+          <span class="cursor">&#9654;</span>
+          <span class="game-name">FIGURE SKATING</span>
+          <span class="game-status">COMING SOON</span>
+        </li>
+        <li class="game-item disabled" data-game="biathlon">
+          <span class="cursor">&#9654;</span>
+          <span class="game-name">BIATHLON</span>
+          <span class="game-status">COMING SOON</span>
+        </li>
+      </ul>
+    </nav>
+
+    <footer id="footer">
+      <p>RETRO WINTER GAMES COLLECTION</p>
+    </footer>
+  </div>
+  <script type="module" src="js/menu.js"></script>
+</body>
+</html>

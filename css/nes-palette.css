@@ -1,0 +1,39 @@
+/* NES Color Palette - CSS Custom Properties */
+:root {
+  /* Whites & Grays */
+  --nes-white: #FCFCFC;
+  --nes-light-gray: #D8D8D8;
+  --nes-gray: #B8B8B8;
+  --nes-dark-gray: #7C7C7C;
+  --nes-black: #181818;
+
+  /* Blues */
+  --nes-sky-light: #A4E4FC;
+  --nes-sky: #3CBCFC;
+  --nes-blue: #0078F8;
+  --nes-blue-dark: #0058F8;
+  --nes-navy: #0000FC;
+
+  /* Reds */
+  --nes-red: #F83800;
+  --nes-red-dark: #A80000;
+  --nes-red-light: #F87858;
+
+  /* Greens */
+  --nes-green-bright: #00A800;
+  --nes-green: #005800;
+  --nes-green-light: #B8F818;
+
+  /* Yellows / Golds */
+  --nes-gold: #F8D878;
+  --nes-yellow: #F8E800;
+  --nes-orange: #FCA044;
+
+  /* Browns */
+  --nes-brown: #503000;
+  --nes-brown-light: #AC7C00;
+
+  /* Purples */
+  --nes-purple: #6844FC;
+  --nes-magenta: #D800CC;
+}

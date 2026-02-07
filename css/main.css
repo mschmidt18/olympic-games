@@ -1,0 +1,210 @@
+/* Landing Page - NES Retro Style */
+@import url('./nes-palette.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--nes-black);
+  font-family: 'Press Start 2P', monospace;
+  color: var(--nes-white);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Snow background canvas */
+#snow-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Main screen container - CRT TV feel */
+#screen {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 24px;
+}
+
+/* Title Section */
+#title-section {
+  text-align: center;
+}
+
+#rings {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.ring {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid;
+}
+
+.ring-blue { border-color: var(--nes-blue); }
+.ring-gold { border-color: var(--nes-gold); }
+.ring-black { border-color: var(--nes-gray); }
+.ring-green { border-color: var(--nes-green-bright); }
+.ring-red { border-color: var(--nes-red); }
+
+#title {
+  font-size: clamp(10px, 4vw, 18px);
+  color: var(--nes-gold);
+  line-height: 1.6;
+  text-shadow:
+    2px 2px 0 var(--nes-brown),
+    -1px -1px 0 var(--nes-brown);
+}
+
+#subtitle {
+  font-size: clamp(7px, 2.5vw, 11px);
+  color: var(--nes-sky-light);
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+/* Game Menu */
+#game-menu {
+  width: 100%;
+  max-width: 380px;
+}
+
+.menu-label {
+  font-size: clamp(6px, 2vw, 9px);
+  color: var(--nes-dark-gray);
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+#game-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.game-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(24, 24, 24, 0.8);
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+
+  /* NES-style border using box-shadow */
+  box-shadow:
+    inset -2px -2px 0 var(--nes-dark-gray),
+    inset 2px 2px 0 var(--nes-gray);
+}
+
+.game-item.active {
+  background: rgba(60, 60, 60, 0.6);
+  box-shadow:
+    inset -2px -2px 0 var(--nes-dark-gray),
+    inset 2px 2px 0 var(--nes-white);
+}
+
+.game-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.cursor {
+  font-size: clamp(7px, 2vw, 10px);
+  color: var(--nes-gold);
+  opacity: 0;
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.game-item.active .cursor {
+  opacity: 1;
+  animation: blink 0.8s step-end infinite;
+}
+
+.game-name {
+  font-size: clamp(7px, 2.5vw, 10px);
+  flex-grow: 1;
+  color: var(--nes-white);
+}
+
+.game-item.disabled .game-name {
+  color: var(--nes-dark-gray);
+}
+
+.game-status {
+  font-size: clamp(5px, 1.5vw, 7px);
+  color: var(--nes-dark-gray);
+  flex-shrink: 0;
+}
+
+.game-status.ready {
+  color: var(--nes-green-bright);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Footer */
+#footer {
+  text-align: center;
+}
+
+#footer p {
+  font-size: clamp(5px, 1.5vw, 7px);
+  color: var(--nes-dark-gray);
+  letter-spacing: 1px;
+}
+
+/* Touch tap feedback */
+.game-item:active:not(.disabled) {
+  background: rgba(80, 80, 80, 0.6);
+}
+
+/* Responsive adjustments */
+@media (min-height: 700px) {
+  #screen {
+    gap: 32px;
+  }
+}
+
+@media (min-width: 600px) {
+  .ring {
+    width: 24px;
+    height: 24px;
+    border-width: 4px;
+  }
+
+  #rings {
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+}
