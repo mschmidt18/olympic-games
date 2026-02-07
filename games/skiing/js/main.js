@@ -27,6 +27,15 @@ let gatesMissed = 0;
 let comboCount = 0;
 let penaltyTime = 0;
 
+// High score
+let highScore = parseInt(localStorage.getItem('skiing_highScore') || '0', 10);
+let isNewHighScore = false;
+
+// Results menu
+let resultsSelection = 0; // 0=PLAY AGAIN, 1=SHARE, 2=BACK TO MENU
+let resultsInputDelay = 0;
+const RESULTS_OPTIONS = 3;
+
 // Track which obstacles have already hit the player
 let hitObstacles = new Set();
 
@@ -198,14 +207,115 @@ function updateFinish(dt) {
 
   finishTimer += dt;
   if (finishTimer > 2.0) {
+    // Check high score
+    isNewHighScore = score > highScore;
+    if (isNewHighScore) {
+      highScore = score;
+      localStorage.setItem('skiing_highScore', String(highScore));
+    }
+
     gameState = STATE.RESULTS;
+    resultsSelection = 0;
+    resultsInputDelay = 0.5;
     blinkTimer = 0;
   }
 }
 
 function updateResults(dt) {
+  resultsInputDelay -= dt;
+  if (resultsInputDelay > 0) {
+    // Drain any pending inputs during delay
+    input.consumeAction();
+    input.consumeUp();
+    input.consumeDown();
+    input.getLastActionPos();
+    return;
+  }
+
+  // Keyboard navigation
+  if (input.consumeUp()) {
+    resultsSelection = (resultsSelection - 1 + RESULTS_OPTIONS) % RESULTS_OPTIONS;
+  }
+  if (input.consumeDown()) {
+    resultsSelection = (resultsSelection + 1) % RESULTS_OPTIONS;
+  }
+
   if (input.consumeAction()) {
-    startGame();
+    const pos = input.getLastActionPos();
+    if (pos) {
+      // Map touch/click position to canvas coordinates
+      const rect = canvas.getBoundingClientRect();
+      const canvasY = ((pos.y - rect.top) / rect.height) * GAME_HEIGHT;
+
+      // Compute option positions to match renderer layout
+      const scoreY = gatesMissed > 0 ? 116 : 108;
+      const bestY = scoreY + 30;
+      const firstOptionY = bestY + 22;
+      const optionSpacing = 18;
+      const hitZone = optionSpacing / 2;
+
+      let tappedOption = -1;
+      for (let i = 0; i < RESULTS_OPTIONS; i++) {
+        const y = firstOptionY + i * optionSpacing;
+        if (canvasY >= y - hitZone && canvasY < y + hitZone) {
+          tappedOption = i;
+          break;
+        }
+      }
+
+      if (tappedOption >= 0) {
+        resultsSelection = tappedOption;
+        executeResultsAction();
+      }
+      // Tap outside option zones — ignore
+    } else {
+      // Keyboard Enter — execute current selection
+      executeResultsAction();
+    }
+  }
+}
+
+function executeResultsAction() {
+  switch (resultsSelection) {
+    case 0:
+      startGame();
+      break;
+    case 1:
+      shareScore();
+      break;
+    case 2:
+      window.location.href = '../../index.html';
+      break;
+  }
+}
+
+function shareScore() {
+  const finalTime = gameTime + penaltyTime;
+  const minutes = Math.floor(finalTime / 60);
+  const seconds = Math.floor(finalTime % 60);
+  const hundredths = Math.floor((finalTime % 1) * 100);
+  const timeStr = `${minutes}:${String(seconds).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`;
+
+  const shareText = `Downhill Skiing - Winter Olympics 2026\n` +
+    `Score: ${score} | Time: ${timeStr}\n` +
+    `Gates: ${gatesPassed}/${COURSE.totalGates}` +
+    (isNewHighScore ? ` | NEW HIGH SCORE!` : '') +
+    `\nCan you beat my score?`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Downhill Skiing - Winter Olympics 2026',
+      text: shareText,
+    }).catch(() => {
+      // User cancelled or share failed - do nothing
+    });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareText).then(() => {
+      renderer.showCopiedMessage();
+    }).catch(() => {
+      // Clipboard failed - do nothing
+    });
   }
 }
 
@@ -241,6 +351,9 @@ function render() {
         gatesMissed,
         COURSE.totalGates,
         score,
+        highScore,
+        isNewHighScore,
+        resultsSelection,
         blinkTimer
       );
       break;

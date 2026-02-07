@@ -4,30 +4,35 @@
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
+html {
   height: 100%;
+}
+
+html, body {
   overflow: hidden;
   background: #000;
   touch-action: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+  overscroll-behavior: none;
+}
+
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 #game-canvas {
   display: block;
-  width: 100vw;
-  height: 100vh;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
   touch-action: none;
   cursor: none;
-}
-
-/* Prevent pull-to-refresh on mobile */
-body {
-  overscroll-behavior: none;
 }
