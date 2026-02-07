@@ -10,6 +10,7 @@ export class Renderer {
 
     this.ctx.imageSmoothingEnabled = false;
     this.fontReady = false;
+    this._copiedTimer = 0;
 
     // Wait for Press Start 2P font to load
     document.fonts.ready.then(() => {
@@ -396,11 +397,11 @@ export class Renderer {
 
   // --- Results Screen ---
 
-  drawResults(time, gatesPassed, gatesMissed, totalGates, score, blinkTimer) {
+  drawResults(time, gatesPassed, gatesMissed, totalGates, score, highScore, isNewHighScore, selection, blinkTimer) {
     const ctx = this.ctx;
 
     // Dim background
-    ctx.fillStyle = 'rgba(24, 24, 24, 0.9)';
+    ctx.fillStyle = 'rgba(24, 24, 24, 0.92)';
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     if (!this.fontReady) return;
@@ -410,11 +411,11 @@ export class Renderer {
     // Title
     ctx.fillStyle = COLORS.gold;
     ctx.font = '8px "Press Start 2P"';
-    ctx.fillText('RESULTS', GAME_WIDTH / 2, 40);
+    ctx.fillText('RESULTS', GAME_WIDTH / 2, 28);
 
     // Divider
     ctx.fillStyle = COLORS.darkGray;
-    ctx.fillRect(40, 50, GAME_WIDTH - 80, 1);
+    ctx.fillRect(40, 34, GAME_WIDTH - 80, 1);
 
     // Time
     const minutes = Math.floor(time / 60);
@@ -423,44 +424,98 @@ export class Renderer {
     const timeStr = `${minutes}:${String(seconds).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`;
 
     ctx.fillStyle = COLORS.white;
-    ctx.font = '6px "Press Start 2P"';
-    ctx.fillText('TIME', GAME_WIDTH / 2, 72);
+    ctx.font = '5px "Press Start 2P"';
+    ctx.fillText('TIME', GAME_WIDTH / 2, 50);
     ctx.fillStyle = COLORS.skyLight;
-    ctx.font = '8px "Press Start 2P"';
-    ctx.fillText(timeStr, GAME_WIDTH / 2, 88);
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillText(timeStr, GAME_WIDTH / 2, 62);
 
     // Gates
     ctx.fillStyle = COLORS.white;
-    ctx.font = '6px "Press Start 2P"';
-    ctx.fillText('GATES', GAME_WIDTH / 2, 110);
+    ctx.font = '5px "Press Start 2P"';
+    ctx.fillText('GATES', GAME_WIDTH / 2, 78);
     ctx.fillStyle = COLORS.greenBright;
-    ctx.font = '8px "Press Start 2P"';
-    ctx.fillText(`${gatesPassed}/${totalGates}`, GAME_WIDTH / 2, 126);
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillText(`${gatesPassed}/${totalGates}`, GAME_WIDTH / 2, 90);
 
     // Missed
     if (gatesMissed > 0) {
       ctx.fillStyle = COLORS.red;
       ctx.font = '5px "Press Start 2P"';
-      ctx.fillText(`${gatesMissed} MISSED`, GAME_WIDTH / 2, 140);
+      ctx.fillText(`${gatesMissed} MISSED`, GAME_WIDTH / 2, 102);
     }
 
     // Score
+    const scoreY = gatesMissed > 0 ? 116 : 108;
     ctx.fillStyle = COLORS.white;
-    ctx.font = '6px "Press Start 2P"';
-    ctx.fillText('SCORE', GAME_WIDTH / 2, 162);
+    ctx.font = '5px "Press Start 2P"';
+    ctx.fillText('SCORE', GAME_WIDTH / 2, scoreY);
     ctx.fillStyle = COLORS.gold;
     ctx.font = '10px "Press Start 2P"';
-    ctx.fillText(`${score}`, GAME_WIDTH / 2, 182);
+    ctx.fillText(`${score}`, GAME_WIDTH / 2, scoreY + 16);
 
-    // Options
-    if (Math.floor(blinkTimer * 2) % 2 === 0) {
-      ctx.fillStyle = COLORS.white;
+    // High score / New high score
+    const bestY = scoreY + 30;
+    if (isNewHighScore) {
+      if (Math.floor(blinkTimer * 3) % 2 === 0) {
+        ctx.fillStyle = COLORS.gold;
+        ctx.font = '6px "Press Start 2P"';
+        ctx.fillText('NEW BEST!', GAME_WIDTH / 2, bestY);
+      }
+    } else {
+      ctx.fillStyle = COLORS.darkGray;
       ctx.font = '5px "Press Start 2P"';
-      ctx.fillText('TAP OR ENTER TO RETRY', GAME_WIDTH / 2, 210);
+      ctx.fillText(`BEST  ${highScore}`, GAME_WIDTH / 2, bestY);
     }
 
+    // Divider before options
     ctx.fillStyle = COLORS.darkGray;
-    ctx.font = '4px "Press Start 2P"';
-    ctx.fillText('OR PRESS ESC FOR MENU', GAME_WIDTH / 2, 228);
+    ctx.fillRect(50, bestY + 8, GAME_WIDTH - 100, 1);
+
+    // Menu options
+    const optionY = bestY + 22;
+    const options = ['PLAY AGAIN', 'SHARE', 'BACK TO MENU'];
+    const optionSpacing = 18;
+
+    for (let i = 0; i < options.length; i++) {
+      const y = optionY + i * optionSpacing;
+      const isSelected = i === selection;
+
+      if (isSelected) {
+        // Blinking cursor
+        if (Math.floor(blinkTimer * 2.5) % 2 === 0) {
+          ctx.fillStyle = COLORS.gold;
+          ctx.font = '6px "Press Start 2P"';
+          ctx.textAlign = 'right';
+          ctx.fillText('\u25B6', GAME_WIDTH / 2 - 52, y);
+        }
+        ctx.fillStyle = COLORS.white;
+      } else {
+        ctx.fillStyle = COLORS.darkGray;
+      }
+
+      ctx.font = '6px "Press Start 2P"';
+      ctx.textAlign = 'center';
+      ctx.fillText(options[i], GAME_WIDTH / 2, y);
+    }
+
+    // Copied to clipboard message
+    if (this._copiedTimer > 0) {
+      ctx.fillStyle = COLORS.greenBright;
+      ctx.font = '4px "Press Start 2P"';
+      ctx.textAlign = 'center';
+      ctx.fillText('COPIED TO CLIPBOARD!', GAME_WIDTH / 2, GAME_HEIGHT - 8);
+    }
+  }
+
+  showCopiedMessage() {
+    this._copiedTimer = 2.0;
+    const fade = () => {
+      this._copiedTimer -= 0.016;
+      if (this._copiedTimer > 0) {
+        requestAnimationFrame(fade);
+      }
+    };
+    requestAnimationFrame(fade);
   }
 }
