@@ -107,9 +107,9 @@ export function updateSled(sled, dt, input, track, scrollX) {
   // Clamp track position to valid range (collision handles bounces)
   sled.trackPosition = Math.max(-1.2, Math.min(1.2, sled.trackPosition));
 
-  // --- Speed: gravity acceleration + air drag ---
-  sled.speed += SLED.speedAcceleration * dt;
-  sled.speed *= Math.pow(SLED.airDrag, dt * 60); // normalize drag to 60fps
+  // --- Speed: gravity acceleration + proportional drag ---
+  // drag force proportional to speed gives natural equilibrium at speedAcceleration/dragCoefficient
+  sled.speed += (SLED.speedAcceleration - SLED.dragCoefficient * sled.speed) * dt;
 
   // Racing line bonus: if close to optimal position inside the curve
   if (curveIntensity > 0.1) {

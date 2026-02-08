@@ -204,7 +204,7 @@ export class Renderer {
     ctx.fillText(timeStr, 4, 10);
 
     // SPEED (center, sky) in km/h
-    const kmh = Math.floor(speed * 0.5);
+    const kmh = Math.floor(speed * 0.9);
     ctx.fillStyle = COLORS.sky;
     ctx.textAlign = 'center';
     ctx.fillText(`${kmh}km/h`, GAME_WIDTH / 2, 10);

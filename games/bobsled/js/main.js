@@ -226,7 +226,7 @@ function updateRacing(dt) {
 
   // Check wall contact and apply effects
   const wallContact = checkWallContact(sled);
-  const wallEffect = applyWallEffects(sled);
+  const wallEffect = applyWallEffects(sled, dt);
 
   if (wallEffect === 'bounce') {
     screenShake = 2;

@@ -16,26 +16,27 @@ export function checkWallContact(sled) {
 }
 
 // Apply wall scrape effects: friction slows sled, bounce at edges
+// dt parameter makes friction framerate-independent
 // Returns 'scrape', 'bounce', or null
-export function applyWallEffects(sled) {
+export function applyWallEffects(sled, dt) {
   const absPos = Math.abs(sled.trackPosition);
 
   if (absPos >= SLED.wallBounceThreshold) {
     // Hard wall bounce: push sled back toward center
     const sign = sled.trackPosition > 0 ? 1 : -1;
-    sled.trackPosition = sign * (SLED.wallBounceThreshold - 0.05);
+    sled.trackPosition = sign * (SLED.wallScrapeThreshold - 0.05); // push back below scrape zone
     sled.lean *= -SLED.wallBounceRestitution; // reverse lean partially
-    sled.speed *= SLED.wallFrictionSpeed;
+    sled.speed *= (1.0 - SLED.wallBounceSpeedLoss); // one-time 25% speed loss
     return 'bounce';
   }
 
   if (absPos > SLED.wallScrapeThreshold) {
-    // Wall scrape: friction bleeds speed
-    // Scale friction by how deep into the scrape zone
+    // Wall scrape: continuous friction, framerate-independent
+    // scrapeDepth goes from 0 (just touching) to 1 (about to bounce)
     const scrapeDepth = (absPos - SLED.wallScrapeThreshold) /
       (SLED.wallBounceThreshold - SLED.wallScrapeThreshold);
-    const friction = 1.0 - (1.0 - SLED.wallFrictionSpeed) * scrapeDepth;
-    sled.speed *= friction;
+    // Exponential decay: speed -= rate * depth * speed * dt
+    sled.speed -= SLED.wallFrictionRate * scrapeDepth * sled.speed * dt;
     return 'scrape';
   }
 

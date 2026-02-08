@@ -55,15 +55,16 @@ export const SLED = {
   leanRate: 3.0,
   leanMomentum: 0.7,
   leanDecay: 2.0,
-  speedBase: 45,
-  speedMax: 100,
-  speedAcceleration: 6,
-  airDrag: 0.91,
-  racingLineBonus: 1.08,
+  speedBase: 60,
+  speedMax: 160,
+  speedAcceleration: 30,
+  dragCoefficient: 0.19,
+  racingLineBonus: 1.05,
   racingLinePosition: 0.3,
   wallScrapeThreshold: 0.85,
   wallBounceThreshold: 1.0,
-  wallFrictionSpeed: 0.5,
+  wallFrictionRate: 2.5,      // exponential speed decay rate per second at full scrape
+  wallBounceSpeedLoss: 0.25,  // lose 25% speed on hard bounce
   wallBounceRestitution: 0.5,
   crashSpeedThreshold: 100,
   crashCurveThreshold: 0.8,
@@ -78,8 +79,8 @@ export const SLED = {
 // Track generation
 export const TRACK = {
   sectionCount: 20,
-  sectionLengthMin: 120,
-  sectionLengthMax: 200,
+  sectionLengthMin: 300,
+  sectionLengthMax: 480,
   trackWidth: 80,
   trackWidthMin: 50,
   trackCenterY: GAME_HEIGHT / 2,
@@ -95,7 +96,7 @@ export const TRACK = {
 export const PUSH = {
   duration: 3.0,
   maxTaps: 20,
-  speedBonusMax: 30,
+  speedBonusMax: 40,
   ratingThresholds: {
     perfect: 0.9,
     great: 0.7,
