@@ -2,6 +2,7 @@
 
 const gameUrls = {
   skiing: 'games/skiing/index.html',
+  bobsled: 'games/bobsled/index.html',
 };
 
 // --- Menu Navigation ---
